@@ -20,7 +20,7 @@ MAX Information is a standalone TypeScript / Next.js telemetry dashboard. It col
 ## Quick start
 1. Create a Supabase project.
 2. Run `supabase/migrations/0001_usage_events.sql` in the Supabase SQL Editor.
-3. Copy `.env.example` to `.env.local` and set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and a long random `INGEST_API_KEY`.
+3. Copy `.env.example` to `.env.local` and set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, a long random `INGEST_API_KEY`, and a separate `DASHBOARD_SECRET`.
 4. Install and run:
    ```bash
    npm install
