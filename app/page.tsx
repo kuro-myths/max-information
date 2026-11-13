@@ -33,15 +33,19 @@ export default function Home() {
   const [live, setLive] = useState(false);
   const [updated, setUpdated] = useState("");
   const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
 
   async function refresh() {
     try {
       const response = await fetch("/api/dashboard/summary", { cache: "no-store" });
       if (response.ok) {
         const result = await response.json();
+        setAuthenticated(true);
         setData(result);
         setLive(true);
-      } else setLive(false);
+      } else { setLive(false); if (response.status === 401) setAuthenticated(false); }
     } catch { setLive(false); }
     setUpdated(new Date().toLocaleTimeString("id-ID"));
     setLoading(false);
@@ -52,6 +56,10 @@ export default function Home() {
     const timer = setInterval(refresh, 15000);
     return () => clearInterval(timer);
   }, []);
+
+  async function login(event: React.FormEvent<HTMLFormElement>) { event.preventDefault(); setAuthError(""); const response = await fetch("/api/dashboard/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password }) }); if (response.ok) { setAuthenticated(true); setPassword(""); refresh(); } else setAuthError("Password salah atau konfigurasi dashboard belum tersedia."); }
+
+  if (!authenticated && !loading) return <main className="login-shell"><form className="login-card" onSubmit={login}><div className="brand-mark"><Activity size={23}/></div><h1>MAX Information</h1><p>Masuk ke dashboard Usage Intelligence</p><label>Dashboard password</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Masukkan dashboard secret" required/><button type="submit">Masuk ke dashboard</button>{authError && <small className="login-error">{authError}</small>}<small>Atur DASHBOARD_SECRET pada environment Vercel.</small></form></main>;
 
   return <main className="shell">
     <aside className="sidebar">
